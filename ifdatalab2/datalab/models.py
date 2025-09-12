@@ -11,6 +11,15 @@ class Campus(models.Model):
         verbose_name = "Campus"
         verbose_name_plural = "Campi"
 
+class GrupoPesquisa(models.Model):
+    nome = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to="logos/", blank=True, null=True)
+    criado_por = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    usuarios = models.ManyToManyField('auth.User', related_name='grupos_pesquisa')
+
+    def __str__(self):
+        return self.nome
+    
 class Pesquisador(models.Model):
     class Funcao(models.TextChoices):
         PROFESSOR = 'Professor', 'Professor'
@@ -26,6 +35,8 @@ class Pesquisador(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     ultima_extracao_em = models.DateTimeField(null=True, blank=True, help_text="Data e hora da última extração de dados do Lattes.")
     status_extracao = models.CharField(max_length=50, default='Pendente')
+    grupo = models.ForeignKey(GrupoPesquisa, on_delete=models.CASCADE, null=True, blank=True)
+
 
     def __str__(self):
         return self.nome_completo

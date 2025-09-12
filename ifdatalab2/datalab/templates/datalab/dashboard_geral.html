@@ -1,0 +1,207 @@
+<h1>Dashboard Geral</h1>
+
+<div class="metrics">
+  <p>Total Pesquisadores: {{ metrics.total_autores }}</p>
+  <p>Total Publicações: {{ metrics.total_publicacoes }}</p>
+  <p>Total Orientações: {{ metrics.total_orientacoes }}</p>
+  <p>Total Produções: {{ metrics.total_producoes }}</p>
+</div>
+
+<h2>Grupos de Pesquisa</h2>
+<ul>
+  {% for grupo in grupos %}
+    <li>
+      <a href="{% url 'dashboard_grupo' grupo.id %}">{{ grupo.nome }}</a>
+    </li>
+  {% endfor %}
+</ul>
+
+
+<!-- <div class="container_dados">
+    <a href="?view=pesquisadores">
+        <div class="custom-div">
+            <p class="number">{{ metrics.total_autores }}</p>
+            <p class="description">Pesquisadores</p>
+        </div>
+    </a>
+
+    <a href="?view=publicacoes">
+        <div class="custom-div">
+            <p class="number">{{ metrics.total_publicacoes }}</p>
+            <p class="description">Publicações</p>
+        </div>
+    </a>
+
+    <a href="?view=orientacoes">
+        <div class="custom-div">
+            <p class="number">{{ metrics.total_orientacoes }}</p>
+            <p class="description">Orientações</p>
+        </div>
+    </a>
+
+    <a href="?view=producoes">
+        <div class="custom-div">
+            <p class="number">{{ metrics.total_producoes }}</p>
+            <p class="description">Produções Técnicas</p>
+        </div>
+    </a>
+</div>
+
+<hr>
+
+{% if view_selecionada == 'publicacoes' %}
+    <h2>Detalhes: Todas as Publicações</h2>
+    <table>
+        <thead>
+            <tr><th>Autor</th><th>Título</th><th>Campus</th></tr>
+        </thead>
+        <tbody>
+        {% for pub in publicacoes %}
+            <tr>
+                <td>{{ pub.pesquisador.nome_completo }}</td>
+                <td>{{ pub.titulo }}</td>
+                <td>{{ pub.campus.nome_campus }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="3">Nenhuma publicação encontrada.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% elif view_selecionada == 'orientacoes' %}
+    <h2>Detalhes: Todas as Orientações</h2>
+    <table>
+        <thead>
+            <tr><th>Orientador</th><th>Título</th><th>Ano</th><th>Discentes</th><th>Campus</th></tr>
+        </thead>
+        <tbody>
+        {% for ori in orientacoes %}
+            <tr>
+                <td>{{ ori.pesquisador.nome_completo }}</td>
+                <td>{{ ori.titulo }}</td>
+                <td>{{ ori.ano }}</td>
+                <td>{{ ori.discentes }}</td>
+                <td>{{ ori.campus.nome_campus }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5">Nenhuma orientação encontrada.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% elif view_selecionada == 'producoes' %}
+    <h2>Detalhes: Produções Gerais</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Pesquisador</th>
+                <th>Produções Técnicas</th>
+                <th>Produções Bibliográficas</th>
+                <th>Orientações</th>
+                <th>Projetos</th>
+                <th>Campus</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for prod in producoes %}
+            <tr>
+                <td>{{ prod.pesquisador.nome_completo }}</td>
+                <td>{{ prod.producoes_tecnicas }}</td>
+                <td>{{ prod.producoes_bibliograficas }}</td>
+                <td>{{ prod.orientacoes }}</td>
+                <td>{{ prod.projetos_pesquisa }}</td>
+                <td>{{ prod.campus.nome_campus }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">Nenhuma produção encontrada.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <h2>Pesquisadores (Dados Lattes)</h2>
+    <table>
+        <thead>
+            <tr><th>Nome</th><th>ID Lattes</th><th>Função</th><th>Campus</th></tr>
+        </thead>
+        <tbody>
+        {% for pesquisador in pesquisadores_lattes %}
+            <tr>
+                <td>{{ pesquisador.nome_completo }}</td>
+                <td>{{ pesquisador.idlattes }}</td>
+                <td>{{ pesquisador.get_funcao_display }}</td>
+                <td>{{ pesquisador.campus.nome_campus }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">Nenhum pesquisador encontrado.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<div class="charts">
+    <h2>Visualizações</h2>
+    <div style="width: 30%; display:inline-block; vertical-align: top;">
+        <canvas id="chartPublicacoes"></canvas>
+    </div>
+    <div style="width: 30%; display:inline-block; vertical-align: top;">
+        <canvas id="chartOrientacoes"></canvas>
+    </div>
+    <div style="width: 30%; display:inline-block; vertical-align: top;">
+        <canvas id="chartFuncoes"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 🔹 Publicações por Campus
+    new Chart(document.getElementById('chartPublicacoes'), {
+        type: 'bar',
+        data: {
+            labels: {{ labels_pubs|safe }},
+            datasets: [{
+                label: 'Publicações por Campus',
+                data: {{ values_pubs|safe }},
+                borderWidth: 1,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    // 🔹 Orientações por Ano
+    new Chart(document.getElementById('chartOrientacoes'), {
+        type: 'line',
+        data: {
+            labels: {{ labels_orient|safe }},
+            datasets: [{
+                label: 'Orientações por Ano',
+                data: {{ values_orient|safe }},
+                borderWidth: 2,
+                borderColor: 'rgba(255, 99, 132, 0.9)',
+                backgroundColor: 'rgba(255, 99, 132, 0.3)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // 🔹 Funções dos Pesquisadores (Pizza)
+    new Chart(document.getElementById('chartFuncoes'), {
+        type: 'pie',
+        data: {
+            labels: {{ labels_funcoes|safe }},
+            datasets: [{
+                data: {{ values_funcoes|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)'
+                ]
+            }]
+        },
+        options: { responsive: true }
+    });
+</script> -->

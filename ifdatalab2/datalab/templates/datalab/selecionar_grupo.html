@@ -1,0 +1,11 @@
+<h1>Escolher Grupo</h1>
+
+{% if grupos %}
+  <ul>
+    {% for grupo in grupos %}
+      <li><a href="{% url 'dashboard_grupo' grupo.id %}">{{ grupo.nome }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Você não está vinculado a nenhum grupo.</p>
+{% endif %}

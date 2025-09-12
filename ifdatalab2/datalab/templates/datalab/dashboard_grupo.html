@@ -1,0 +1,124 @@
+<h1>Dashboard do Grupo: {{ grupo.nome }}</h1>
+
+{% if grupo.logo %}
+    <img src="{{ grupo.logo.url }}" alt="{{ grupo.nome }}" style="max-height:100px; margin-bottom:20px;">
+{% endif %}
+
+<div class="container_dados">
+    <a href="?view=pesquisadores">
+        <div class="custom-div">
+            <p class="number">{{ metrics.total_autores }}</p>
+            <p class="description">Pesquisadores</p>
+        </div>
+    </a>
+    <a href="?view=publicacoes">
+        <div class="custom-div">
+            <p class="number">{{ metrics.total_publicacoes }}</p>
+            <p class="description">Publicações</p>
+        </div>
+    </a>
+    <a href="?view=orientacoes">
+        <div class="custom-div">
+            <p class="number">{{ metrics.total_orientacoes }}</p>
+            <p class="description">Orientações</p>
+        </div>
+    </a>
+    <a href="?view=producoes">
+        <div class="custom-div">
+            <p class="number">{{ metrics.total_producoes }}</p>
+            <p class="description">Produções Técnicas</p>
+        </div>
+    </a>
+</div>
+
+<hr>
+
+{% if view_selecionada == 'publicacoes' %}
+    <h2>Detalhes: Todas as Publicações</h2>
+    <table>
+        <thead>
+            <tr><th>Autor</th><th>Título</th><th>Campus</th></tr>
+        </thead>
+        <tbody>
+        {% for pub in publicacoes %}
+            <tr>
+                <td>{{ pub.pesquisador.nome_completo }}</td>
+                <td>{{ pub.titulo }}</td>
+                <td>{{ pub.campus.nome_campus }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="3">Nenhuma publicação encontrada.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% elif view_selecionada == 'orientacoes' %}
+    <h2>Detalhes: Todas as Orientações</h2>
+    <table>
+        <thead>
+            <tr><th>Orientador</th><th>Título</th><th>Ano</th><th>Discentes</th><th>Campus</th></tr>
+        </thead>
+        <tbody>
+        {% for ori in orientacoes %}
+            <tr>
+                <td>{{ ori.pesquisador.nome_completo }}</td>
+                <td>{{ ori.titulo }}</td>
+                <td>{{ ori.ano }}</td>
+                <td>{{ ori.discentes }}</td>
+                <td>{{ ori.campus.nome_campus }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5">Nenhuma orientação encontrada.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% elif view_selecionada == 'producoes' %}
+    <h2>Detalhes: Produções Gerais</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Pesquisador</th>
+                <th>Produções Técnicas</th>
+                <th>Produções Bibliográficas</th>
+                <th>Orientações</th>
+                <th>Projetos</th>
+                <th>Campus</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for prod in producoes %}
+            <tr>
+                <td>{{ prod.pesquisador.nome_completo }}</td>
+                <td>{{ prod.producoes_tecnicas }}</td>
+                <td>{{ prod.producoes_bibliograficas }}</td>
+                <td>{{ prod.orientacoes }}</td>
+                <td>{{ prod.projetos_pesquisa }}</td>
+                <td>{{ prod.campus.nome_campus }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">Nenhuma produção encontrada.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <h2>Pesquisadores</h2>
+    <table>
+        <thead>
+            <tr><th>Nome</th><th>ID Lattes</th><th>Função</th><th>Campus</th></tr>
+        </thead>
+        <tbody>
+        {% for pesquisador in pesquisadores %}
+            <tr>
+                <td>{{ pesquisador.nome_completo }}</td>
+                <td>{{ pesquisador.idlattes }}</td>
+                <td>{{ pesquisador.get_funcao_display }}</td>
+                <td>{{ pesquisador.campus.nome_campus }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">Nenhum pesquisador no grupo.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
