@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pesquisador.nome_completo }} - Perfil{% endblock %}
+
+{% block content %}
+<div class="bg-white border-b p-4 rounded-lg border-gray-200">
+    <div class="container-max py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        
+        <div class="flex items-center gap-6">
+            <!-- Avatar com Iniciais -->
+            <div class="h-24 w-24 rounded-full bg-green-100 border-4 border-white shadow-md flex items-center justify-center text-green-700 text-4xl font-bold flex-shrink-0">
+                {{ pesquisador.nome_completo|slice:":1" }}
+            </div>
+            
+            <!-- Info do Pesquisador -->
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 leading-tight">{{ pesquisador.nome_completo }}</h1>
+                
+                <div class="flex flex-wrap gap-3 mt-3">
+                    <!-- Badge Função -->
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 border border-green-100">
+                        {{ pesquisador.get_funcao_display }}
+                    </span>
+                    <!-- Badge Campus -->
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                        {{ pesquisador.campus.nome_campus|default:"Campus N/A" }}
+                    </span>
+                    <!-- Badge Grupo (Link) -->
+                    {% if pesquisador.grupo %}
+                    <a href="{% url 'datalab:detalhes_grupo_publico' pesquisador.grupo.id %}" class="group px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100 transition-colors flex items-center gap-1">
+                        {{ pesquisador.grupo.nome }}
+                        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="mt-4 text-sm text-gray-500 font-mono flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Lattes ID: <a href="http://lattes.cnpq.br/{{ pesquisador.idlattes }}" target="_blank" class="text-green-600 hover:text-green-800 hover:underline transition-colors">{{ pesquisador.idlattes }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-max py-8 space-y-8">
+
+    <!-- Métricas Rápidas (Cards de Topo) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="card p-6 text-center hover:shadow-md transition-shadow border-t-4 border-t-green-500">
+            <span class="text-4xl font-extrabold text-gray-800 block mb-1">{{ metrics.total_pubs }}</span>
+            <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Publicações</span>
+        </div>
+        <div class="card p-6 text-center hover:shadow-md transition-shadow border-t-4 border-t-blue-500">
+            <span class="text-4xl font-extrabold text-gray-800 block mb-1">{{ metrics.total_projs }}</span>
+            <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Projetos</span>
+        </div>
+        <div class="card p-6 text-center hover:shadow-md transition-shadow border-t-4 border-t-orange-500">
+            <span class="text-4xl font-extrabold text-gray-800 block mb-1">{{ metrics.total_oris }}</span>
+            <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Orientações</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Coluna Principal (Esquerda) -->
+        <div class="lg:col-span-2 space-y-8">
+            
+            <!-- Publicações -->
+            <div class="card">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">Publicações Recentes</h3>
+                    <span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">{{ publicacoes.count }}</span>
+                </div>
+                <div class="p-6 space-y-6">
+                    {% for pub in publicacoes|slice:":10" %}
+                    <div class="pb-4 border-b border-gray-50 last:border-0 last:pb-0">
+                        <p class="text-gray-800 font-medium leading-relaxed text-sm">{{ pub.titulo }}</p>
+                        <div class="text-xs text-gray-500 mt-2 flex flex-wrap gap-2">
+                            {% if pub.categoria %}
+                                <span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-100 font-medium">{{ pub.categoria }}</span>
+                            {% endif %}
+                            {% if pub.subcategoria %}
+                                <span class="bg-gray-50 text-gray-600 px-2 py-0.5 rounded border border-gray-100">{{ pub.subcategoria }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-8 text-gray-400 italic bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                        Nenhuma publicação registada.
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if publicacoes.count > 10 %}
+                <div class="bg-gray-50 p-3 text-center border-t border-gray-100 rounded-b-lg">
+                    <span class="text-sm text-gray-500 italic">Exibindo as 10 mais recentes</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Projetos -->
+            <div class="card">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">Projetos de Pesquisa</h3>
+                    <span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">{{ projetos.count }}</span>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-4">
+                        {% for proj in projetos %}
+                        <li class="flex items-start gap-3">
+                            <div class="mt-1.5 w-2 h-2 bg-green-500 rounded-full flex-shrink-0 shadow-sm"></div>
+                            <span class="text-gray-700 text-sm leading-relaxed">{{ proj.titulo }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="text-center py-8 text-gray-400 italic bg-gray-50 rounded-lg border border-dashed border-gray-200 list-none">
+                            Nenhum projeto registado.
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Coluna Lateral (Direita) -->
+        <div class="space-y-8">
+
+            <!-- Lista de Orientações -->
+            <div class="card">
+                <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-gray-800">Últimas Orientações</h3>
+                    <span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">{{ orientacoes.count }}</span>
+                </div>
+                <div class="p-5 space-y-4">
+                    {% for ori in orientacoes|slice:":5" %}
+                    <div class="flex items-start justify-between gap-3 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                        <div>
+                            <p class="text-sm font-medium text-gray-800 line-clamp-2" title="{{ ori.titulo }}">{{ ori.titulo }}</p>
+                            {% if ori.discentes %}
+                            <p class="text-xs text-gray-500 mt-1">Aluno: {{ ori.discentes }}</p>
+                            {% endif %}
+                        </div>
+                        {% if ori.ano %}
+                        <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded flex-shrink-0 border border-gray-200">{{ ori.ano }}</span>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p class="text-center py-6 text-gray-400 text-sm italic bg-gray-50 rounded border border-dashed border-gray-200">Nenhuma orientação.</p>
+                    {% endfor %}
+                </div>
+                 {% if orientacoes.count > 5 %}
+                <div class="bg-gray-50 p-2 text-center border-t border-gray-100 rounded-b-lg">
+                    <span class="text-xs text-gray-400 italic">+ {{ orientacoes.count|add:"-5" }} outras orientações</span>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

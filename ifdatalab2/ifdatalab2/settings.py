@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'ifdatalab2.middleware.SetupMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -84,7 +85,7 @@ DATABASES = {
         'NAME': 'ifdatalab2',
         'USER': 'ifdatalab_user',
         'PASSWORD': 'yui789&*(',
-        'HOST': '10.25.1.249',
+        'HOST': '10.26.1.73',
         'PORT': '5432',
     },
     'legacy': {
@@ -92,7 +93,7 @@ DATABASES = {
         'NAME': 'ifdatalab',
         'USER': 'ifdatalab_user',
         'PASSWORD': 'yui789&*(',
-        'HOST': '10.25.1.249',
+        'HOST': '10.26.1.73',
         'PORT': '54321',
     }
 }
@@ -120,9 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Fortaleza'
 
 USE_I18N = True
 
@@ -142,3 +143,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+STATICFILES_DIRS = [BASE_DIR / "static"]

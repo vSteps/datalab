@@ -1,0 +1,167 @@
+{% extends "dashboard/painel.html" %}
+
+{% block painel_conteudo %}
+
+<h1 class="text-2xl font-semibold mb-6">
+  Auditoria de Fontes Externas
+</h1>
+
+<form method="post" action="{% url 'datalab:executar_comparacao' %}" class="mb-6">
+  {% csrf_token %}
+<button
+  type="submit"
+  class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-md shadow"
+>
+  Atualizar dados das fontes externas
+</button>
+</form>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  
+  <!-- Redmine -->
+  <div class="bg-white border border-red-200 rounded-lg p-5 shadow-sm">
+    <p class="text-sm text-gray-500">Redmine</p>
+    <p class="text-3xl font-semibold text-red-800">
+      {{ total_redmine }}
+    </p>
+  </div>
+
+  <!-- CCSL -->
+    <div class="bg-white border border-green-200 rounded-lg p-5 shadow-sm">
+    <p class="text-sm text-gray-500">CCSL</p>
+    <p class="text-3xl font-semibold text-green-600">
+        {{ total_ccsl }}
+    </p>
+    </div>
+
+  <!-- DGP -->
+  <div class="bg-white border border-blue-200 rounded-lg p-5 shadow-sm">
+    <p class="text-sm text-gray-500">DGP</p>
+    <p class="text-3xl font-semibold text-blue-800">
+      {{ total_dgp }}
+    </p>
+  </div>
+
+</div>
+
+<h3 class="text-lg font-semibold mb-4">
+  Comparação entre Fontes
+</h3>
+
+<!-- Abas -->
+<div class="flex gap-2 border-b mb-4">
+<button onclick="openTab(event, 'ccsl')"
+  class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 border-b-2 border-transparent hover:text-green-600 active">
+  CCSL
+</button>
+
+<button onclick="openTab(event, 'dgp')"
+  class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 border-b-2 border-transparent hover:text-green-600">
+  DGP
+</button>
+
+<button onclick="openTab(event, 'ccsl_nao_dgp')"
+  class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 border-b-2 border-transparent hover:text-green-600">
+  CCSL ❌ DGP
+</button>
+
+<button onclick="openTab(event, 'redmine_nao_dgp')"
+  class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 border-b-2 border-transparent hover:text-green-600">
+  Redmine ❌ DGP
+</button>
+</div>
+
+<!-- Conteúdo das abas -->
+<div id="ccsl" class="tab-content">
+  <div class=" rounded-lg p-4 max-h-[500px] overflow-y-auto bg-gray-50">
+    <p class="text-sm text-gray-500 mb-3">
+      Total: {{ ccsl|length }}
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+      {% for p in ccsl %}
+        <div class="px-3 py-2 rounded bg-white">
+          {{ p.nome_ccsl }}
+        </div>
+      {% empty %}
+        <p class="text-gray-500">Nenhum pesquisador</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div id="dgp" class="tab-content hidden">
+  <div class="rounded-lg p-4 max-h-[500px] overflow-y-auto bg-gray-50">
+    <p class="text-sm text-gray-500 mb-3">
+      Total: {{ dgp|length }}
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {% for p in dgp %}
+                <div class="px-3 py-2 rounded bg-white">
+          {{ p.nome_dgp }}
+        </div>
+      {% empty %}
+        <p class="text-gray-500">Nenhum pesquisador</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+<div id="ccsl_nao_dgp" class="tab-content hidden">
+  <div class="border-red-200 rounded-lg p-4 max-h-[500px] overflow-y-auto bg-red-50">
+    <p class="text-sm text-red-600 mb-3 font-medium">
+      Ausentes no DGP: {{ ccsl_nao_dgp|length }}
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+      {% for p in ccsl_nao_dgp %}
+        <div class="px-3 py-2 border-red-300 rounded bg-white">
+          {{ p.nome }}
+        </div>
+      {% empty %}
+        <p class="text-gray-500">Nenhuma divergência</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+<div id="redmine_nao_dgp" class="tab-content hidden">
+  <div class="border-yellow-200 rounded-lg p-4 max-h-[500px] overflow-y-auto bg-yellow-50">
+    <p class="text-sm text-yellow-700 mb-3 font-medium">
+      Redmine fora do DGP: {{ redmine_nao_dgp|length }}
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+      {% for p in redmine_nao_dgp %}
+        <div class="px-3 py-2 border-yellow-300 rounded bg-white">
+          {{ p.nome }}
+        </div>
+      {% empty %}
+        <p class="text-gray-500">Nenhuma divergência</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+function openTab(event, id) {
+  document.querySelectorAll('.tab-content').forEach(el =>
+    el.classList.add('hidden')
+  )
+
+  document.querySelectorAll('.tab-btn').forEach(el => {
+    el.classList.remove('border-green-600', 'text-green-600')
+  })
+
+  document.getElementById(id).classList.remove('hidden')
+  event.target.classList.add('border-green-600', 'text-green-600')
+}
+</script>
+
+
+{% endblock %}

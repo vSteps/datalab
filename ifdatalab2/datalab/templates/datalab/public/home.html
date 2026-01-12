@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}DataLab - Inteligência de Dados{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="min-h-screen pb-16"> 
+
+    <section class="p-4 bg-white rounded-xl mb-8 shadow-md"> 
+        <div class="container-max py-8">
+            <h1 class="text-3xl font-bold text-green-800 mb-1">
+                DataLab
+            </h1>
+            <p class="text-gray-600">
+                Visão estratégica dos dados de pesquisa e inovação.
+            </p>
+        </div>
+    </section>
+
+    <div class="container-max space-y-8 mt-8">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center text-center">
+                <span class="pt-2 text-sm mt-2 font-semibold text-gray-400 uppercase tracking-wider">Pesquisadores</span>
+                <span class="text-4xl font-extrabold text-gray-800 mb-2">{{ metrics.total_pesquisadores }}</span>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center text-center">
+                <span class="pt-2 text-sm mt-2 font-semibold text-gray-400 uppercase tracking-wider">Grupos Ativos</span>
+                <span class="text-4xl font-extrabold text-gray-800 mb-2">{{ metrics.total_grupos }}</span>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center text-center">
+                <span class="pt-2 text-sm mt-2 font-semibold text-gray-400 uppercase tracking-wider">Publicações</span>
+                <span class="text-4xl font-extrabold text-gray-800 mb-2">{{ metrics.total_publicacoes }}</span>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center text-center">
+                <span class="pt-2 text-sm mt-2 font-semibold text-gray-400 uppercase tracking-wider">Produções</span>
+                <span class="text-4xl font-extrabold text-gray-800 mb-2">{{ metrics.total_producoes }}</span>
+            </div>
+        </div>
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
+
+
+            <div class="bg-white rounded-lg shadow-md lg:col-span-2 p-4">
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold text-gray-700">Evolução Anual da Produção</h3>
+                </div>
+                <div class="h-72 w-full">
+                    <canvas id="chartEvolucao"></canvas>
+                </div>
+            </div>
+
+            {# TOP GRUPOS #}
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="mb-4">
+                    <h3 class="text-lg p-6 font-bold text-gray-700">Top 5 Grupos (Publicações)</h3>
+                </div>
+                <div class="h-64 pl-4">
+                    <canvas id="chartTopGrupos"></canvas>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class="text-center py-10 mt-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-3">
+                Quer saber quem está por trás desses números?
+            </h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                Mergulhe nos detalhes. Descubra quem são os pesquisadores e grupos que estão liderando a inovação no campus.
+            </p>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                </div>
+        </div>
+
+        <div class="flex justify-center gap-4">
+            <a href="{% url 'datalab:lista_publica_grupos' %}"
+               class="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-100 transition p-10">
+                Explorar Grupos
+            </a>
+            <a href="{% url 'datalab:lista_publica_pesquisadores' %}"
+               class="px-6 py-2 bg-green-700 border border-transparent text-white font-medium rounded-lg shadow-sm hover:bg-green-800 transition p-10">
+                Buscar Pesquisador
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{# SCRIPTS DOS GRÁFICOS #}
+<script>
+    const colors = {
+        green: 'rgba(34, 197, 94, 0.6)',
+        greenBorder: 'rgba(34, 197, 94, 1)',
+        blue: 'rgba(59, 130, 246, 0.6)',
+        purple: 'rgba(168, 85, 247, 0.6)',
+        orange: 'rgba(249, 115, 22, 0.6)'
+    };
+
+    // EVOLUÇÃO
+    new Chart(document.getElementById('chartEvolucao'), {
+        type: 'line',
+        data: {
+            labels: {{ chart_anos_labels|safe }}, // Eixo X (Anos unificados)
+            datasets: [
+                {
+                    label: 'Publicações',
+                    data: {{ chart_data_pubs|safe }},
+                    backgroundColor: colors.green, 
+                    borderColor: colors.greenBorder, // Linha Verde Sólida
+                    borderWidth: 2,
+                    tension: 0.3
+                },
+                {
+                    label: 'Orientações',
+                    data: {{ chart_data_oris|safe }},
+                    backgroundColor: colors.blue,
+                    borderColor: 'rgba(59, 130, 246, 1)', // Linha Azul
+                    borderWidth: 2,
+                    borderDash: [5, 5], // Linha Pontilhada (para diferenciar visualmente)
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index', // Mostra tooltip dos dois pontos ao mesmo tempo
+                intersect: false,
+            },
+            scales: { 
+                y: { 
+                    beginAtZero: true, 
+                    grid: { borderDash: [2, 4], color: '#e5e7eb' } 
+                } 
+            },
+            plugins: { 
+                legend: { display: true, position: 'top' }, // Ativa a legenda para saber quem é quem
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            return 'Ano: ' + context[0].label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // TOP GRUPOS
+    new Chart(document.getElementById('chartTopGrupos'), {
+        type: 'bar',
+        data: {
+            labels: {{ chart_grupos_labels|safe }},
+            datasets: [{
+                label: 'Publicações',
+                data: {{ chart_grupos_data|safe }},
+                backgroundColor: [colors.blue, colors.green, colors.purple, colors.orange, 'gray'],
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // PIZZA
+    new Chart(document.getElementById('chartPizza'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Bibliográfica', 'Técnica'],
+            datasets: [{
+                data: {{ chart_pizza_data|safe }},
+                backgroundColor: [colors.green, colors.orange],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            cutout: '70%'
+        }
+    });
+</script>
+{% endblock %}

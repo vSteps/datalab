@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br" class="h-full"> 
+<head>
+<link rel="icon" type="image/svg+xml" href="{% static 'logos/icone.svg' %}">
+    <meta charset="UTF-8">
+    <title>{% block title %}DataLab{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+</head>
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+
+<header class="bg-white shadow-sm">
+    <div class="container-max flex items-center justify-between py-4 p-10">
+        <a href="{% url 'datalab:home_publica' %}" class="flex items-center gap-3">
+            <img src="{% static 'logos/logo.svg' %}" alt="Logo" class="h-8 w-auto object-contain">
+        </a>
+            <nav class="space-x-4 text-sm">
+                {% if user.is_authenticated and user.is_staff %}
+                    <a class="text-gray-700 hover:text-green-700" href="{% url 'datalab:dashboard_geral' %}">Meu Painel</a>
+                    <a class="text-gray-700 hover:text-green-700" href="{% url 'admin:index' %}" target="_blank">Admin Django</a>
+                    <a class="text-gray-700 hover:text-green-700" href="{% url 'logout' %}?next={% url 'login' %}">Sair</a>
+                {% else %}
+                    <a class="text-gray-700 hover:text-green-700" href="{% url 'datalab:lista_publica_pesquisadores' %}">Pesquisadores</a>
+                    <a class="text-gray-700 hover:text-green-700" href="{% url 'datalab:lista_publica_grupos' %}">Grupos</a>
+                    <a class="text-gray-700 hover:text-green-700" href="{% url 'login' %}">Acesso</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <div class="max-w-6xl mx-auto px-4 py-10">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="bg-white mt-auto"> 
+        <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-gray-600">
+            <p>&copy; {% now "Y" %} DataLab. Projeto de TCC desenvolvido no IFRN.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.14",
+    "tailwindcss": "^4.1.14"
+  },
+  "scripts": {
+    "watch:css":"npx @tailwindcss/cli -i ./ifdatalab2/static/src/styles.css -o ./ifdatalab2/static/dist/styles.css --watch"
+  }
+}

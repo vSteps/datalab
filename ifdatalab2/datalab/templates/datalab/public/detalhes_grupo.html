@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ grupo.nome }} - DataLab{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen pb-12">
+    
+    <div class="bg-white shadow-sm border-b">
+        <div class="container-max py-6 flex flex-col md:flex-row items-center gap-6">
+            {% if grupo.logo %}
+                <img src="{{ grupo.logo.url }}" class="h-24 w-24 object-contain rounded-lg border p-1">
+            {% else %}
+                <div class="h-24 w-24 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 border">
+                    <span class="text-xs">Sem Logo</span>
+                </div>
+            {% endif %}
+            
+            <div class="text-center md:text-left">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">{{ grupo.nome }}</h1>
+                <p class="text-gray-500 mt-1">Coordenado por <span class="font-semibold">{{ grupo.lider|default:"Não informado" }}</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-max space-y-8 mt-8">
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-green-900 text-white rounded-lg p-4 text-center shadow-md">
+                <div class="text-3xl font-bold">{{ metrics.total_autores }}</div>
+                <div class="text-xs uppercase tracking-wider opacity-80">Pesquisadores</div>
+            </div>
+            <div class="bg-blue-900 text-white rounded-lg p-4 text-center shadow-md">
+                <div class="text-3xl font-bold">{{ metrics.total_publicacoes }}</div>
+                <div class="text-xs uppercase tracking-wider opacity-80">Produções Biblio.</div>
+            </div>
+            <div class="bg-blue-900 text-white rounded-lg p-4 text-center shadow-md">
+                <div class="text-3xl font-bold">{{ metrics.total_producoes }}</div>
+                <div class="text-xs uppercase tracking-wider opacity-80">Produções Técnicas</div>
+            </div>
+            <div class="bg-blue-900 text-white rounded-lg p-4 text-center shadow-md">
+                <div class="text-3xl font-bold">{{ metrics.total_orientacoes }}</div>
+                <div class="text-xs uppercase tracking-wider opacity-80">Orientações</div>
+            </div>
+        </div>
+
+        <section class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-200 flex items-center gap-2">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <h2 class="text-lg font-bold text-gray-700">Descrição do Grupo</h2>
+            </div>
+            
+            <div class="p-6 text-sm">
+                <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                    <div class="sm:col-span-1">
+                        <dt class="font-medium text-gray-500">Líder do Grupo</dt>
+                        <dd class="mt-1 text-gray-900 font-semibold">{{ grupo.lider|default:"-" }}</dd>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <dt class="font-medium text-gray-500">Ano de Formação</dt>
+                        <dd class="mt-1 text-gray-900">{{ grupo.ano_formacao|default:"-" }}</dd>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <dt class="font-medium text-gray-500">Área de Conhecimento</dt>
+                        <dd class="mt-1 text-gray-900">{{ grupo.area|default:"Ciência da Computação" }}</dd>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <dt class="font-medium text-gray-500">Link CNPq</dt>
+                        <dd class="mt-1 text-green-600 hover:underline">
+                            {% if grupo.link_cnpq %}
+                                <a href="{{ grupo.link_cnpq }}" target="_blank">Acessar Diretório</a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <dt class="font-medium text-gray-500">Linhas de Pesquisa / Descrição</dt>
+                        <dd class="mt-1 text-gray-900 text-justify leading-relaxed">
+                            {{ grupo.descricao|default:"O grupo desenvolve pesquisas aplicadas focadas em inovação tecnológica e desenvolvimento regional..." }}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-200 flex items-center gap-2">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <h2 class="text-lg font-bold text-gray-700">Pesquisadores e Produtividade</h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Pesquisador</th>
+                            <th class="px-6 py-3 text-center font-medium text-gray-500 uppercase tracking-wider">Prod. Biblio.</th>
+                            <th class="px-6 py-3 text-center font-medium text-gray-500 uppercase tracking-wider">Prod. Técnica</th>
+                            <th class="px-6 py-3 text-center font-medium text-gray-500 uppercase tracking-wider">Orientações</th>
+                            <th class="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Lattes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for p in pesquisadores %}
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="h-8 w-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold text-xs mr-3">
+                                        {{ p.nome_completo|slice:":2" }}
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-900">{{ p.nome_completo }}</div>
+                                        <div class="text-xs text-gray-500">{{ p.get_funcao_display }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700 font-medium">
+                                {{ p.qtd_publicacoes }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700 font-medium">
+                                {{ p.qtd_tec|default:"0" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700 font-medium">
+                                {{ p.qtd_orientacoes }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
+                                {% if p.link_lattes %}
+                                    <a href="{{ p.link_lattes }}" target="_blank" class="text-blue-600 hover:underline">Ver CV</a>
+                                {% else %}
+                                    <span class="text-xs text-gray-400">Não inf.</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Nenhum pesquisador vinculado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-lg shadow border p-6">
+                <h3 class="font-bold text-gray-800 border-b pb-2 mb-4">Últimas Publicações</h3>
+                <ul class="space-y-3">
+                    <li class="text-sm text-gray-600 flex gap-2">
+                        <span class="text-green-600 font-bold">•</span>
+                        <span>Desenvolvimento de API REST com Django (2024)</span>
+                    </li>
+                    <li class="text-sm text-gray-600 flex gap-2">
+                        <span class="text-green-600 font-bold">•</span>
+                        <span>Análise de Dados Educacionais (2023)</span>
+                    </li>
+                    <li class="text-xs text-gray-400 italic mt-2">Ver lista completa...</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow border p-6">
+                <h3 class="font-bold text-gray-800 border-b pb-2 mb-4">Orientações em Andamento</h3>
+                 <ul class="space-y-3">
+                    {% for ori in context_extra.lista_detalhada|slice:":5" %}
+                    <li class="text-sm text-gray-600">
+                        <span class="font-semibold text-gray-800">{{ ori.discente }}</span> - {{ ori.titulo|truncatechars:40 }}
+                    </li>
+                    {% empty %}
+                    <li class="text-sm text-gray-500">Nenhuma orientação recente.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

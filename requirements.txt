@@ -1,2 +1,6 @@
 django
 psycopg2-binary
+Pillow
+requests
+django-crispy-forms
+django-filter
