@@ -24,6 +24,7 @@ from datalab import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("extracao/", include(('extracao.urls', 'extracao'), namespace='extracao')),
     path("", include(('datalab.urls', 'datalab'), namespace='datalab')),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', logout_view, name='logout'),

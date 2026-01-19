@@ -4,7 +4,7 @@ import json
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from datalab.models import (
-    Pesquisador, GrupoPesquisa, Publicacao, Orientacao, ProducaoGeral
+    Pesquisador, GrupoPesquisa, Publicacao, Orientacao, ProducaoGeral, ProjetoPesquisa
 )
 
 def detalhes_grupo_publico(request, grupo_id):

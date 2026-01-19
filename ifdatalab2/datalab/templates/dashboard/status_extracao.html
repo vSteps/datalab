@@ -1,0 +1,20 @@
+<h2 class="text-xl font-semibold mb-4">
+  Extração de {{ status.pesquisador.nome_completo }}
+</h2>
+
+{% if status.status == "RODANDO" or status.status == "PENDENTE" %}
+  <div class="flex items-center gap-2 text-yellow-600">
+    <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"></svg>
+    ⏳Extração em andamento...
+  </div>
+
+  <script>
+    setTimeout(() => location.reload(), 5000);
+  </script>
+
+{% elif status.status == "SUCESSO" %}
+  <p class="text-green-600">{{ status.mensagem }}</p>
+
+{% elif status.status == "ERRO" %}
+  <p class="text-red-600">{{ status.mensagem }}</p>
+{% endif %}

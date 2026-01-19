@@ -8,7 +8,7 @@
     <div class="container-max py-10">
         <h1 class="text-3xl font-bold  text-gray-900">Nossos Pesquisadores</h1>
         <p class="text-gray-500 mt-2 text-lg">
-            Conheça os especialistas que impulsionam a inovação no IF.
+            Conheça os especialistas que impulsionam a inovação.
         </p>
     </div>
 </div>
@@ -33,12 +33,15 @@
                         {{ pesquisador.nome_completo }}
                     </h2>
                     <div class="flex flex-col gap-1">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 w-fit">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 w-fit">
                             {{ pesquisador.get_funcao_display }}
                         </span>
-                        <p class="text-xs text-gray-500">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 w-fit">
+                            {{ pesquisador.grupo }}
+                        </span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 w-fit">
                             {{ pesquisador.campus.nome_campus|default:"Campus não informado" }}
-                        </p>
+                        </span>
                     </div>
                 </div>
             </div>

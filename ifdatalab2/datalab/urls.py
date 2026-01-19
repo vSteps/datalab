@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from datalab.views import *
 
 app_name = 'datalab'
@@ -17,6 +17,8 @@ urlpatterns = [
 
     path("painel/comparador/", painel_comparador, name="painel_comparador"),
     path("painel/comparador/executar/", executar_comparacao, name="executar_comparacao"),
+
+    path("extracao/", include("extracao.urls")),
 
     path("logout/", logout_view, name='logout'),
 ]

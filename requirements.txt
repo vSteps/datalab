@@ -5,3 +5,6 @@ requests
 scholarly
 django-crispy-forms
 django-filter
+pandas
+selenium
+beautifulsoup4

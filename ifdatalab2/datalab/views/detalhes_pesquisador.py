@@ -1,32 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, Sum
 import json
-from scholarly import scholarly
 from datalab.models import (
     Pesquisador, GrupoPesquisa, Publicacao, Orientacao, ProducaoGeral
 )
 
-
-
-def get_scholar_info(pesquisador):
-    try:
-        search_query = scholarly.search_author(pesquisador.nome_completo)
-        author = next(search_query, None)
-        if author:
-            author = scholarly.fill(author)
-            return {
-                'citações_totais': author.get('citedby', 0),
-                'índice_h': author.get('hindex', 0),
-                'índice_i10': author.get('i10index', 0),
-            }
-    except Exception as e:
-        print(f"Erro ao obter dados do Google Scholar para {pesquisador.nome_completo}: {e}")
-    
-    return {
-        'citações_totais': 0,
-        'índice_h': 0,
-        'índice_i10': 0,
-    }
 
 def detalhes_pesquisador_publico(request, pesquisador_id):
     """
@@ -61,7 +39,6 @@ def detalhes_pesquisador_publico(request, pesquisador_id):
         'orientacoes': orientacoes,
         'metrics': metrics,
         'dados_grafico': dados_grafico,
-        'scholar_info': get_scholar_info(pesquisador),
     }
     
     return render(request, 'datalab/public/detalhes_pesquisador.html', context)

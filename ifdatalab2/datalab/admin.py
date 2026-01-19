@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Campus, Pesquisador, Publicacao, Orientacao, ProducaoGeral, GrupoPesquisa
+from .models import AdminGrupo
 
 @admin.register(Campus)
 class CampusAdmin(admin.ModelAdmin):
@@ -18,3 +19,4 @@ admin.site.register(Publicacao)
 admin.site.register(Orientacao)
 admin.site.register(ProducaoGeral)
 admin.site.register(GrupoPesquisa)
+admin.site.register(AdminGrupo)

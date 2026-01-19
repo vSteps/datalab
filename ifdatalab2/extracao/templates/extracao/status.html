@@ -1,0 +1,40 @@
+{% extends "dashboard/painel.html" %}
+
+{% block painel_conteudo %}
+
+<h1 class="text-2xl font-semibold mb-4">
+  Extração de Produtividade
+</h1>
+
+<h2 class="text-lg font-medium mb-2">
+  {{ extracao.pesquisador.nome_completo }}
+</h2>
+
+{% if extracao.status == "PENDENTE" or extracao.status == "RODANDO" %}
+  <p class="text-yellow-600 font-medium">
+    ⏳Extração em andamento… aguarde
+  </p>
+
+  <div class="mt-4 animate-pulse text-gray-500">
+    Coletando dados do Lattes…
+  </div>
+
+  <script>
+    setTimeout(() => location.reload(), 5000);
+  </script>
+
+{% elif extracao.status == "SUCESSO" %}
+  <p class="text-green-600 font-medium">
+    Extração concluída com sucesso!
+  </p>
+
+{% elif extracao.status == "ERRO" %}
+  <p class="text-red-600 font-medium">
+    Erro na extração:
+  </p>
+  <pre class="text-sm text-red-500 mt-2">
+    {{ extracao.erro }}
+  </pre>
+{% endif %}
+
+{% endblock %}

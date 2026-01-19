@@ -9,5 +9,8 @@ import json
 import re
 from collections import Counter
 
-def is_staff(user):
-    return user.is_staff
+def is_admin_grupo(user):
+    return hasattr(user, "admingrupo")
+
+def is_admin_global(user):
+    return user.is_superuser

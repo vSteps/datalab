@@ -6,6 +6,8 @@ from .publicacao import Publicacao
 from .orientacao import Orientacao
 from .projeto_pesquisa import ProjetoPesquisa
 from .producao_geral import ProducaoGeral
+from .user import AdminGrupo
+
 
 # Comparador
 from .ccsl import PesquisadoresCCSL
